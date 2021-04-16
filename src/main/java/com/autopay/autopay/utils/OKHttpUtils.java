@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class OKHttpUtils {
 
-    public static boolean useProxy = false;
+    public static boolean useProxy = true;
 
     public static void main(String[] args) throws IOException {
         JDSessionCore.JDSession session = new JDSessionCore.JDSession();
@@ -236,13 +236,7 @@ public class OKHttpUtils {
         OkHttpClient client = builder.build();
 
         Request.Builder requestBuilder = new Request.Builder();
-
-        String fullUrl = webRequest.getCleanUrl();
-        if (!webRequest.getUrlParams().isEmpty()) {
-            fullUrl += "?";
-            fullUrl += UrlUtils.mapToParamString(webRequest.getUrlParams());
-        }
-        requestBuilder.url(fullUrl);
+        requestBuilder.url(webRequest.generateFullUrl());
 
         for (Header header : webRequest.getHeaders()) {
             requestBuilder.addHeader(header.getName(), header.getValue());

@@ -6,6 +6,7 @@ import com.autopay.autopay.core.JDSessionCore;
 import com.autopay.autopay.domain.dto.PayInfo;
 import com.autopay.autopay.domain.web.JDRequest;
 import com.autopay.autopay.domain.web.WebResponse;
+import com.autopay.autopay.utils.OKHttpUtils;
 import com.autopay.autopay.utils.UrlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.message.BasicNameValuePair;
@@ -49,21 +50,16 @@ public class QueryOrderService {
             PayInfo payInfo =  entry.getValue();
             AtomicInteger count = counter.get(orderId);
 
-            JDRequest query = new JDRequest(payInfo.getSession());
-            query.setCleanUrl(payInfo.getQueryUrl());
-
-            String location = "";
-            try {
-                WebResponse queryResp = jdHttp(query);
-                location = queryResp.getLocation().trim();
-            } catch (IOException e) {
-                e.printStackTrace();
+            boolean orderIsSuccess = false;
+            if (payInfo.getOrderType() == 1){
+                orderIsSuccess = queryOrderNormal(payInfo);
+            }else if (payInfo.getOrderType() == 2){
+                orderIsSuccess = queryOrderGame(payInfo);
             }
 
-            if (StringUtils.hasLength(location) && location.startsWith("https://payfinish.m.jd.com/cpay/finish/cashier-finish.html")){
+            if (orderIsSuccess){
                 //支付成功
-                String successOrderId = UrlUtils.getQueryMap(location).get("orderId");
-                log.info("支付成功 orderId = " + successOrderId);
+                log.info("支付成功 orderId = " + payInfo.getOrderId());
                 it.remove();
                 counter.remove(orderId);
 
@@ -81,5 +77,58 @@ public class QueryOrderService {
                 }
             }
         }
+    }
+
+    //查询游戏商品订单状态
+    private boolean queryOrderGame(PayInfo payInfo){
+
+        JDRequest query = new JDRequest(payInfo.getSession());
+        query.setCleanUrl(payInfo.getQueryUrl());
+
+        String location = "";
+        try {
+            WebResponse queryResp = jdHttp(query);
+            location = queryResp.getLocation().trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (StringUtils.hasLength(location) && location.startsWith("https://payfinish.m.jd.com/cpay/finish/cashier-finish.html")){
+            return true;
+        }
+        return false;
+    }
+
+
+    //查询普通商品订单状态
+    private boolean queryOrderNormal(PayInfo payInfo){
+
+        Map<String, String> bodyMap  = new LinkedHashMap<>();
+        bodyMap.put("payId", payInfo.getJdPrePayId());
+        bodyMap.put("payEnum", payInfo.getPayEnum());
+        bodyMap.put("time", "1");
+
+        Map<String, String> wxMap  = new LinkedHashMap<>();
+        wxMap.put("functionId", "wapWeiXinPayQueryForMobile");
+        wxMap.put("body", JSON.toJSONString(bodyMap));
+        wxMap.put("appId", "jd_m_pay");
+        wxMap.put("payId", payInfo.getPayId());
+        wxMap.put("_format_", "JSON");
+
+        JDRequest wxRequest = new JDRequest(payInfo.getSession());
+        wxRequest.setCleanUrl("https://pay.m.jd.com/index.action");
+        wxRequest.addReferer("https://pay.m.jd.com/cpay/newPay-index.html?payId=" +  payInfo.getPayId() +"37332b41059941a7b37731b4599492d5&appId=jd_m_pay");
+        wxRequest.addUrlParams(wxMap);
+        try {
+            WebResponse wxResponse = OKHttpUtils.jdHttp(wxRequest);
+            JSONObject wxJson = JSONObject.parseObject(wxResponse.getHtml());
+            String payStatus = wxJson.getString("payStatus");
+            if ("1".equals(payStatus)){
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

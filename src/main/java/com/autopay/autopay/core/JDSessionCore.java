@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import java.net.Proxy;
 import java.util.*;
@@ -24,6 +25,16 @@ public class JDSessionCore {
     }
 
     public final LinkedHashMap<String, JDSession> sessionMap = new LinkedHashMap<>();
+
+    @PostConstruct
+    public void init(){
+        //测试使用
+        List<Cookie> cookies = new ArrayList<>();
+        cookies.add(new Cookie("pt_key", "AAJgbYS9ADBxFdnemcDRWPeWqllJ19XvVEQs5WGgVkRlET0SFdWvj4Ln7pw-Qgc58E4wbsOAl04"));
+        cookies.add(new Cookie("pt_pin", "18219111805_p"));
+        cookies.add(new Cookie("unpl", "V2_ZzNtbUpeSxEnAEBSLh0PBmIFEVxLVBYdJ11AVXlKWFdnCxRVclRCFnUUR1FnGVwUZAAZWENcRxdFCEdkeBBVAWMDE1VGZxBFLV0CFSNGF1wjU00zEQdEQiYAT1cpTVUGYlQbX0tUFxB9CkVUfkoMVmVQElxyZ0AVRQhHZHsRVAdiCxRYR1JzJXI4dmR4H10AZwsiXHJWc1chVEBXfR9cAyoDGlVAUksTcA1DZHopXw%3d%3d"));
+        createSession(cookies);
+    }
 
     public JDSession randomSession(){
         int size = sessionMap.size();

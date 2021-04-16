@@ -10,15 +10,25 @@ import java.util.Map;
 
 public class UrlUtils {
 
-    @SneakyThrows
     public static String mapToParamString(Map<String, String> map) {
+        return mapToParamString(map, true);
+    }
+
+    @SneakyThrows
+    public static String mapToParamString(Map<String, String> map, boolean urlEncode) {
         StringBuilder data = new StringBuilder();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (StringUtils.hasLength(entry.getValue())){
-                data.append("&").append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+
+            if (urlEncode){
+                String value = "";
+                if (StringUtils.hasLength(entry.getValue())){
+                    value = URLEncoder.encode(entry.getValue(), "UTF-8");
+                }
+                data.append("&").append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(value);
+            }else {
+                data.append("&").append(entry.getKey()).append("=").append(entry.getValue());
             }
         }
-
         return  data.toString().replaceFirst("&", "");
     }
 
