@@ -28,12 +28,12 @@ public class JDSessionCore {
 
     @PostConstruct
     public void init(){
-        //测试使用
-        List<Cookie> cookies = new ArrayList<>();
-        cookies.add(new Cookie("pt_key", "AAJgbYS9ADBxFdnemcDRWPeWqllJ19XvVEQs5WGgVkRlET0SFdWvj4Ln7pw-Qgc58E4wbsOAl04"));
-        cookies.add(new Cookie("pt_pin", "18219111805_p"));
-        cookies.add(new Cookie("unpl", "V2_ZzNtbUpeSxEnAEBSLh0PBmIFEVxLVBYdJ11AVXlKWFdnCxRVclRCFnUUR1FnGVwUZAAZWENcRxdFCEdkeBBVAWMDE1VGZxBFLV0CFSNGF1wjU00zEQdEQiYAT1cpTVUGYlQbX0tUFxB9CkVUfkoMVmVQElxyZ0AVRQhHZHsRVAdiCxRYR1JzJXI4dmR4H10AZwsiXHJWc1chVEBXfR9cAyoDGlVAUksTcA1DZHopXw%3d%3d"));
-        createSession(cookies);
+//        //测试使用
+//        List<Cookie> cookies = new ArrayList<>();
+//        cookies.add(new Cookie("pt_key", "AAJgfO_HADB0kDR6ItpgBZLKJarcwxqGuX_-gTvZAZR49SZ-QI4U1IOBPsABx1vfWOwe8ruBhrI"));
+//        cookies.add(new Cookie("pt_pin", "18219111805_p"));
+//        cookies.add(new Cookie("unpl", "V2_ZzNtbUtVFEd8XEVTLEwJV2JUQVhLU0YXcg5EBH8cXAQzVxFbclRCFnUUR1FnGVQUZwYZWUVcRhBFCEdkeBBVAWMDE1VGZxBFLV0CFSNGF1wjU00zEQdEQiYAT1cpTVUGYlQbX0tUFxB9CkVUfkoMVmVQElxyZ0AVRQhHZH8aWwJhAhpdRGdzEkU4dlF%2bGF0BYzMTbUNnAUEpDEFQex1aSGMAFVpEVksVczhHZHg%3d"));
+//        createSession(cookies);
     }
 
     public JDSession randomSession(){

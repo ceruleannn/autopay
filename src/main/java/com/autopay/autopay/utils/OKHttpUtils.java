@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class OKHttpUtils {
 
-    public static boolean useProxy = true;
+    public static boolean useProxy = false;
 
     public static void main(String[] args) throws IOException {
         JDSessionCore.JDSession session = new JDSessionCore.JDSession();
@@ -226,7 +226,9 @@ public class OKHttpUtils {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.followRedirects(false);
-        builder.cookieJar(cookieJar);
+        if (cookieJar != null){
+            builder.cookieJar(cookieJar);
+        }
         if (useProxy){
             builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
                     .connectTimeout(webRequest.getTimeoutSeconds(), TimeUnit.SECONDS)
@@ -266,5 +268,6 @@ public class OKHttpUtils {
 
         return webResponse;
     }
+
 }
 
